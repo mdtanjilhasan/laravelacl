@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('permissions', function (Blueprint $table) {
+            $table->string('label')->nullable()->after('name');
             $table->foreignId('permission_group_id')->nullable()->after('guard_name')->constrained()->nullOnDelete();
         });
     }
@@ -23,7 +24,7 @@ return new class extends Migration {
         if (Schema::hasTable('permissions') && Schema::hasColumn('permissions', 'permission_group_id')) {
             Schema::table('permissions', function (Blueprint $table) {
                 $table->dropForeign(['permission_group_id']);
-                $table->dropColumn('permission_group_id');
+                $table->dropColumn(['label', 'permission_group_id']);
             });
         }
     }

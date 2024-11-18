@@ -18,26 +18,22 @@ class AclDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $input_roles = $this->command->ask('Enter roles in comma separate format.', 'Super Admin,Developer,Editor');
-        $roles_array = explode(',', $input_roles);
-
-        $permissionGroups = [];
-        foreach ($roles_array as $name) {
-            $permissionGroups[] = ['name' => trim($name), 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()];
-        }
-
-        PermissionGroups::insert($permissionGroups);
-
-        // Seed the default permissions
-        foreach ($this->defaultPermissions() as $groupId => $permissions) {
+        $order = 1;
+        foreach ($this->defaultPermissions() as $group => $permissions) {
+            $permissionGroup = PermissionGroups::create(['name' => $group, 's_order' => $order]);
+            $order++;
             foreach ($permissions as $name => $label) {
-                Permission::firstOrCreate(['name' => $name, 'permission_group_id' => $groupId]);
+                Permission::firstOrCreate(['name' => $name, 'permission_group_id' => $permissionGroup->id]);
             }
         }
 
+        $input_roles = $this->command->ask('Enter roles in comma separate format.', 'Super Admin,Developer,Editor');
+        $roles_array = explode(',', $input_roles);
+        $order = 1;
         foreach ($roles_array as $role) {
-            $role = Role::firstOrCreate(['name' => trim($role)]);
-            if ($role->name == 'Super Admin' || $role->name == 'Developer') {
+            $role = Role::firstOrCreate(['name' => trim($role), 's_order' => $order]);
+            $order++;
+            if (in_array($role->name, ['Super Admin', 'Developer'])) {
                 $role->syncPermissions(Permission::all());
             }
         }
@@ -52,12 +48,9 @@ class AclDatabaseSeeder extends Seeder
     public function defaultPermissions(): array
     {
         return [
-            1 => ['is_super_admin' => 'Super Admin'],
-            2 => ['is_admin' => 'Admin'],
-            3 => ['is_developer' => 'Developer'],
-            4 => ['view_roles' => 'View roles list', 'add_roles' => 'Add new roles', 'edit_roles' => 'Edit roles', 'delete_roles' => 'Delete roles'],
-            5 => ['view_permissions' => 'View permission list', 'add_permissions' => 'Add permissions', 'edit_permissions' => 'Edit permissions', 'edit_permissions_keyword' => 'Edit permissions keyword', 'delete_permissions' => 'Delete permissions'],
-            6 => ['view_users' => 'View Users List', 'add_users' => 'Add new user', 'edit_users' => 'Edit users', 'delete_users' => 'Delete users']
+            'Roles' => ['view_roles' => 'View roles list', 'add_roles' => 'Add new role', 'edit_roles' => 'Edit role', 'delete_roles' => 'Delete roles'],
+            'Permissions' => ['view_permissions' => 'View permission list', 'add_permissions' => 'Add new permission', 'edit_permissions' => 'Edit permission', 'delete_permissions' => 'Delete permissions'],
+            'Users' => ['view_users' => 'View Users List', 'add_users' => 'Add new user', 'edit_users' => 'Edit user', 'trash_users' => 'Trash users', 'restore_users' => 'Restore users', 'delete_users' => 'Delete users']
         ];
     }
 
