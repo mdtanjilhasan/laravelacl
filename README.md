@@ -207,7 +207,7 @@ inside url you need to give your git ```username:apppassword```
 "repositories":[
   {
     "type": "vcs",
-    "url": "https://username:apppassword@bitbucket.org/Axilweb/acl2022.git"
+    "url": "https://username:apppassword@bitbucket.org/your-repo/your-project.git"
   }
 ],
 ```
@@ -344,10 +344,5 @@ composer require laravel/socialite
 ],
 ```
 
-
-## BY Axilweb TEAM
-
 #### Developers
-
-- Khurshed Alam Nayem
 - Md. Tanjil Hasan
