@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        if (config('acl.user_softdelete')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->foreignId('deleted_by')->nullable()->after('remember_token')->constrained('users');
+                $table->softDeletes();
+            });
+        }
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down():void
+    {
+        if (config('acl.user_softdelete')) {
+            if (Schema::hasTable('users')) {
+                Schema::table('users', function (Blueprint $table) {
+                    $table->dropForeign('deleted_by');
+                    $table->dropColumn(['deleted_by', 'deleted_at']);
+                });
+            }
+        }
+    }
+};

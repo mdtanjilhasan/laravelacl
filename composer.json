@@ -1,0 +1,37 @@
+{
+    "name": "modules/acl",
+    "license": "MIT",
+    "description": "Laravel 9+ ACL - Spatie",
+    "authors": [
+        {
+            "name": "Md. Tanjil Hasan",
+            "email": "engineertanjil@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "illuminate/config": "^8.0|^9.0",
+        "illuminate/database": "^8.0|^9.0",
+        "illuminate/support": "^8.0|^9.0",
+        "laravel/sanctum": "^3.0",
+        "spatie/laravel-permission": "^5.5",
+        "cviebrock/eloquent-sluggable": "^9.0"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Modules\\Acl\\": "../acl/"
+        },
+        "files": [
+            "Helpers/helpers.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Acl\\Providers\\AclServiceProvider"
+            ]
+        }
+    }
+}

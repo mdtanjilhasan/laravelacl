@@ -1,0 +1,55 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create(config('acl.profile_module.table_name'), function (Blueprint $table) {
+            if (config('acl.profile_module.is_uuid_primary')) {
+                $table->uuid(config('acl.profile_module.uuid_column_name'))->primary();
+                $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
+            } else {
+                $table->id();
+                $table->foreignId('user_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
+            }
+            $table->string('first_name', 100)->nullable();
+            $table->string('last_name', 100)->nullable();
+            $table->string('phone', 25)->nullable();
+            $table->dateTime('date_of_birth')->nullable();
+            $table->string('gender')->nullable();
+            $table->string('state', 20)->nullable();
+            $table->string('city', 50)->nullable();
+            $table->string('country', 50)->nullable();
+            $table->string('zipcode', 20)->nullable();
+            $table->text('address')->nullable();
+            $table->string('street_1')->nullable();
+            $table->string('street_2')->nullable();
+            $table->string('image_avatar')->nullable();
+
+            if (config('acl.profile_module.softdelete')) {
+                if (config('acl.profile_module.is_uuid_primary')) {
+                    $table->foreignUuid('deleted_by')->nullable()->constrained('users')->nullOnDelete();
+                } else {
+                    $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
+                }
+                $table->softDeletes();
+            }
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists(config('acl.profile_module.table_name'));
+    }
+};
